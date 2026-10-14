@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>Neural RPS Lab — Learn by Playing</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar wrap">
+    <a class="brand" href="/" aria-label="Neural RPS Lab home">
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <span>NEURAL<span class="brand-muted"> / RPS LAB</span></span>
+    </a>
+    <div class="topbar-right"><span class="live-dot"></span><span>LIVE INFERENCE VISUALIZER</span><span class="version">ML LAB 01</span></div>
+  </header>
+
+  <main class="wrap page-grid">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> SUPERVISED LEARNING · INTERACTIVE EXPERIMENT</div>
+      <h1>Every move tells<br>the model <em>something.</em></h1>
+      <p class="intro-copy">Play Rock · Paper · Scissors against an ANN and watch your move history flow through feature engineering, neural layers, probabilities, and a decision policy.</p>
+      <div class="intro-pills"><span>28 input features</span><span>48 → 24 neurons</span><span>3-class softmax</span></div>
+    </section>
+
+    <section class="stats-grid" aria-label="Model summary">
+      <article class="stat-card"><div class="stat-label">MODEL PIPELINE</div><div class="stat-value">28 <span>→</span> 48 <span>→</span> 24 <span>→</span> 3</div><div class="stat-foot">Dense neural network</div></article>
+      <article class="stat-card"><div class="stat-label">SYNTHETIC TRAINING ROWS</div><div id="stat-samples" class="stat-value">—</div><div class="stat-foot">Generated behavior sequences</div></article>
+      <article class="stat-card"><div class="stat-label">HELD-OUT ACCURACY</div><div id="stat-accuracy" class="stat-value">—</div><div class="stat-foot">Synthetic test sessions only</div></article>
+      <article class="stat-card"><div class="stat-label">MATCH RECORD</div><div id="stat-record" class="stat-value">0 <span>W</span> · 0 <span>T</span> · 0 <span>L</span></div><div class="stat-foot">Your rounds this session</div></article>
+    </section>
+
+    <section class="game-panel panel">
+      <div class="section-head">
+        <div><div class="section-kicker">01 / THE ARENA</div><h2>Make your move</h2></div>
+        <div class="round-badge">ROUND <strong id="round-number">01</strong></div>
+      </div>
+      <div class="game-layout">
+        <div class="player-zone">
+          <div class="side-label"><span class="side-dot player-dot"></span> YOU <span class="side-sub">HUMAN INPUT</span></div>
+          <div class="move-options" id="move-options">
+            <button class="move-card" data-move="rock" disabled><span class="move-emoji">✊</span><span class="move-name">Rock</span><span class="move-hint">Crushes scissors</span></button>
+            <button class="move-card" data-move="paper" disabled><span class="move-emoji">✋</span><span class="move-name">Paper</span><span class="move-hint">Covers rock</span></button>
+            <button class="move-card" data-move="scissors" disabled><span class="move-emoji">✌️</span><span class="move-name">Scissors</span><span class="move-hint">Cuts paper</span></button>
+          </div>
+          <div id="player-status" class="micro-status">Waiting for the model to finish its analysis…</div>
+        </div>
+        <div class="versus-column"><div class="versus-ring">VS</div><div class="versus-line"></div><span>SIMULTANEOUS<br>ROUND</span></div>
+        <div class="ai-zone">
+          <div class="side-label"><span class="side-dot ai-dot"></span> ANN PLAYER <span class="side-sub">MODEL POLICY</span></div>
+          <div class="ai-move-card" id="ai-move-card">
+            <div class="ai-orbit"><span></span><span></span><span></span></div>
+            <div class="ai-emoji" id="ai-emoji">◌</div>
+            <div class="ai-move-name" id="ai-move-name">Analyzing…</div>
+            <div class="ai-move-sub" id="ai-move-sub">Neural inference in progress</div>
+          </div>
+          <div id="ai-status" class="micro-status"><span class="pulse-dot"></span> Forward pass running</div>
+        </div>
+      </div>
+      <div class="game-footer">
+        <div class="result-message" id="result-message"><span class="result-indicator"></span><span>Model is preparing its first decision. Your move will unlock when inference completes.</span></div>
+        <div class="game-actions"><button id="replay-button" class="button button-secondary" disabled>↻ Replay pipeline</button><button id="reset-button" class="button button-ghost">Reset match</button></div>
+      </div>
+    </section>
+
+    <section class="pipeline-section panel">
+      <div class="section-head pipeline-head">
+        <div><div class="section-kicker">02 / LIVE INFERENCE TRACE</div><h2>Follow the data</h2><p class="section-copy">Each stage lights up as the same request passes through the real trained model. Values below come from this inference, not a decorative demo.</p></div>
+        <div class="pipeline-state"><span id="pipeline-state-dot" class="state-dot"></span><span id="pipeline-state-text">INITIALIZING</span></div>
+      </div>
+      <div class="progress-track"><div id="pipeline-progress" class="progress-fill"></div><div id="data-packet" class="data-packet"></div></div>
+      <div class="pipeline-grid" id="pipeline-grid">
+        <article class="stage-card" data-stage="0"><div class="stage-top"><span class="stage-number">01</span><span class="stage-icon">⌁</span></div><div class="stage-title">Observed history</div><div class="stage-subtitle">Raw event sequence</div><div class="stage-content" id="stage-history"><div class="placeholder">Collecting prior moves…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size" id="history-size">0 moves</span></div></article>
+        <article class="stage-card" data-stage="1"><div class="stage-top"><span class="stage-number">02</span><span class="stage-icon">⌘</span></div><div class="stage-title">Feature engineering</div><div class="stage-subtitle">History → numeric signals</div><div class="stage-content" id="stage-features"><div class="placeholder">Building 28 features…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">28 features</span></div></article>
+        <article class="stage-card" data-stage="2"><div class="stage-top"><span class="stage-number">03</span><span class="stage-icon">▦</span></div><div class="stage-title">Input layer</div><div class="stage-subtitle">Standardized feature vector</div><div class="stage-content" id="stage-input"><div class="placeholder">Awaiting vector…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">28 values</span></div></article>
+        <article class="stage-card" data-stage="3"><div class="stage-top"><span class="stage-number">04</span><span class="stage-icon">◉</span></div><div class="stage-title">Hidden layer 1</div><div class="stage-subtitle">Weighted sums + ReLU</div><div class="stage-content" id="stage-hidden1"><div class="placeholder">Computing activations…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">48 neurons</span></div></article>
+        <article class="stage-card" data-stage="4"><div class="stage-top"><span class="stage-number">05</span><span class="stage-icon">◉</span></div><div class="stage-title">Hidden layer 2</div><div class="stage-subtitle">Pattern representation</div><div class="stage-content" id="stage-hidden2"><div class="placeholder">Computing activations…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">24 neurons</span></div></article>
+        <article class="stage-card output-stage" data-stage="5"><div class="stage-top"><span class="stage-number">06</span><span class="stage-icon">◌</span></div><div class="stage-title">Output probabilities</div><div class="stage-subtitle">Softmax · next move</div><div class="stage-content" id="stage-output"><div class="placeholder">Scoring 3 classes…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">3 classes</span></div></article>
+        <article class="stage-card decision-stage" data-stage="6"><div class="stage-top"><span class="stage-number">07</span><span class="stage-icon">↗</span></div><div class="stage-title">Decision policy</div><div class="stage-subtitle">Expected payoff</div><div class="stage-content" id="stage-decision"><div class="placeholder">Comparing actions…</div></div><div class="stage-foot"><span class="stage-status">WAITING</span><span class="stage-size">1 action</span></div></article>
+      </div>
+      <div class="trace-bottom"><div class="trace-note"><span class="trace-note-icon">i</span><div><strong>What the model is doing</strong><p id="trace-explanation">The AI uses only completed rounds to predict your next move. It then chooses the action with the best expected payoff against that probability distribution.</p></div></div><div class="trace-meta"><span>INFERENCE ID</span><strong id="inference-id">—</strong><span>FORWARD PASS CHECK</span><strong id="forward-check">—</strong></div></div>
+    </section>
+
+    <section class="details-grid">
+      <article class="panel detail-panel"><div class="section-kicker">03 / FEATURE INSPECTOR</div><h2>What entered the network?</h2><p class="section-copy">Inspect the raw feature and its scaled value. Hover or focus a row for a hint.</p><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Raw</th><th>Scaled</th></tr></thead><tbody id="feature-table"><tr><td colspan="3" class="empty-cell">Run inference to inspect the feature vector.</td></tr></tbody></table></div><div class="table-footer" id="feature-table-footer">28 engineered signals · StandardScaler</div></article>
+      <article class="panel detail-panel"><div class="section-kicker">04 / CLASS CONFIDENCE</div><h2>Probability distribution</h2><p class="section-copy">Softmax scores sum to 100%. They represent learned model confidence, not a guarantee.</p><div id="probability-detail" class="probability-detail"><div class="placeholder">Output probabilities will appear here.</div></div><div class="decision-summary" id="decision-summary"><div class="summary-label">NEXT-MOVE PREDICTION</div><div class="summary-value">Waiting for inference</div></div><div class="utility-list" id="utility-list"></div></article>
+    </section>
+
+    <section class="learning-note panel"><div class="learning-symbol">λ</div><div><div class="section-kicker">THE IMPORTANT ML LESSON</div><h2>Patterns are learnable. True randomness is not.</h2><p>The network is trained on synthetic opponents that repeat, bias, cycle, alternate, or follow transition patterns. A random player has no reliably predictable next move, so do not treat confidence as proof. This demo predicts the <em>next</em> move using prior rounds only; the move you are about to make is never leaked into that round's prediction.</p></div></section>
+
+    <footer class="footer"><span>NEURAL RPS LAB <span class="footer-muted">· FROM SYNTHETIC DATA TO LIVE INFERENCE</span></span><span>PYTHON · SCIKIT-LEARN · FLASK · VANILLA JS</span></footer>
+  </main>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

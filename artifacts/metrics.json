@@ -1,0 +1,76 @@
+{
+  "dataset_samples": 32445,
+  "synthetic_sessions": 1800,
+  "train_samples_before_augmentation": 26071,
+  "train_samples_after_augmentation": 78213,
+  "test_samples": 6374,
+  "input_features": 28,
+  "architecture": [
+    28,
+    48,
+    24,
+    3
+  ],
+  "activation": "ReLU hidden layers; softmax output probabilities",
+  "epochs_requested": 350,
+  "iterations_run": 54,
+  "test_accuracy": 0.5872293693128334,
+  "test_log_loss": 0.8864650997168718,
+  "majority_class_baseline": 0.3333333333333333,
+  "labels": [
+    "rock",
+    "paper",
+    "scissors"
+  ],
+  "confusion_matrix": [
+    [
+      1203,
+      410,
+      467
+    ],
+    [
+      442,
+      1250,
+      528
+    ],
+    [
+      371,
+      413,
+      1290
+    ]
+  ],
+  "classification_report": {
+    "rock": {
+      "precision": 0.5967261904761905,
+      "recall": 0.5783653846153847,
+      "f1-score": 0.58740234375,
+      "support": 2080.0
+    },
+    "paper": {
+      "precision": 0.602990834539315,
+      "recall": 0.5630630630630631,
+      "f1-score": 0.5823433496389471,
+      "support": 2220.0
+    },
+    "scissors": {
+      "precision": 0.5645514223194749,
+      "recall": 0.6219864995178399,
+      "f1-score": 0.591878871300757,
+      "support": 2074.0
+    },
+    "accuracy": 0.5872293693128334,
+    "macro avg": {
+      "precision": 0.5880894824449934,
+      "recall": 0.5878049823987626,
+      "f1-score": 0.5872081882299013,
+      "support": 6374.0
+    },
+    "weighted avg": {
+      "precision": 0.5884389361089342,
+      "recall": 0.5872293693128334,
+      "f1-score": 0.5870969391710437,
+      "support": 6374.0
+    }
+  },
+  "note": "Evaluation is on held-out synthetic sessions, not on real human users. Random behavior is inherently unpredictable."
+}
